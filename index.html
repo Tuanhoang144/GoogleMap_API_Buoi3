@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google Maps API Demo</title>
+    <!-- jsFiddle will insert css and js -->
+    <style type="text/css">
+        #map {
+            height: 100%;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script>
+      let map;
+      const BuuDienHCM = { lat: 10.779862767567758, lng:106.69987284733081 };
+      const quocTuGiam = { lat: 21.027847904091093, lng: 105.83550387007325 };
+      const radius = 13;
+      let BuuDienLL;
+      let quoctugiamLL;
+       const cityhochiminh = {hochiminh: {
+          center: { lat:10.779862767567758, lng:106.69987284733081 },
+          population: 603502,
+        },
+      };
+      function initMap() {
+         map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 20,
+          center: { lat:10.779862767567758, lng:106.69987284733081 },
+        });
+        for (const city in cityhochiminh) {
+          const cirleBuuDienHCM = new google.maps.Circle({
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map,
+            center: BuuDienHCM ,
+            radius,
+          });
+          const cirlequoctugiam = new google.maps.Circle({
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map,
+            center: quocTuGiam ,
+            radius,
+          });
+        }
+        BuuDienLL = new google.maps.LatLng(10.779862767567758, 106.69987284733081);
+        var point1 = google.maps.geometry.spherical.computeOffset(BuuDienLL, radius * 2, 120);
+        var point2 = google.maps.geometry.spherical.computeOffset(BuuDienLL, radius * 2, 0);
+        var point3 = google.maps.geometry.spherical.computeOffset(BuuDienLL, radius * 2, -120);
+
+        const BuuDienngoaitiep = new google.maps.Polygon({
+            path: [point1, point2, point3],
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map
+        });
+        var point1 = google.maps.geometry.spherical.computeOffset(BuuDienLL, radius, 120);
+        var point2 = google.maps.geometry.spherical.computeOffset(BuuDienLL, radius, 0);
+        var point3 = google.maps.geometry.spherical.computeOffset(BuuDienLL, radius, -120);
+
+        const BuuDiennoitiep = new google.maps.Polygon({
+            path: [point1, point2, point3],
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map
+        });
+
+        quoctugiamLL = new google.maps.LatLng( 21.027847904091093,  105.83550387007325 );
+        var point1 = google.maps.geometry.spherical.computeOffset(quoctugiamLL, radius * 2, 120);
+        var point2 = google.maps.geometry.spherical.computeOffset(quoctugiamLL, radius * 2, 0);
+        var point3 = google.maps.geometry.spherical.computeOffset(quoctugiamLL, radius * 2, -120);
+
+        const quocTugiamngoaitiep = new google.maps.Polygon({
+            path: [point1, point2, point3],
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map
+        });
+
+        var point1 = google.maps.geometry.spherical.computeOffset(quoctugiamLL, radius, 120);
+        var point2 = google.maps.geometry.spherical.computeOffset(quoctugiamLL, radius, 0);
+        var point3 = google.maps.geometry.spherical.computeOffset(quoctugiamLL, radius, -120);
+
+        const quocTuGiamnoitiep = new google.maps.Polygon({
+            path: [point1, point2, point3],
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map
+        });
+        addMarkers();
+        directionsService();
+    }
+
+    function addMarkers() {
+        let postMarker = new google.maps.Marker({
+            position: BuuDienHCM,
+            map
+        });
+
+        let quocTuGiamMarker = new google.maps.Marker({
+            position: quocTuGiam,
+            map
+        });
+
+        const postInfoWindow = new google.maps.InfoWindow({
+            content: "<b>Bưu điện trung tâm thành phố Hồ Chí Minh</b>",
+            position: BuuDienHCM,
+        });
+
+        const quocTuGiamInfoWindow = new google.maps.InfoWindow({
+            content: "<b>Quốc Tử Giám Hà Nội</b>",
+            position: quocTuGiam,
+        });
+
+        postMarker.addListener('click', () => {
+            postInfoWindow.open(map);
+        });
+
+        quocTuGiamMarker.addListener('click', () => {
+            quocTuGiamInfoWindow.open(map);
+        });
+    }
+         
+    function directionsService() {
+            var BuuDien = new google.maps.LatLng(10.779862767567758, 106.69987284733081);
+            var QuocTuGiam = new google.maps.LatLng(21.027847904091093,  105.83550387007325 );
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: true });
+            directionsRenderer.setMap(map);
+            directionsService.route(
+                {
+                    origin: QuocTuGiam,
+                    destination: BuuDien,
+                    travelMode: google.maps.TravelMode.DRIVING,
+
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        directionsRenderer.setDirections(response);
+                    } else { window.alert("lỗi " + status); }
+                });
+    }
+    </script>
+    
+</head>
+
+<body>
+    <div id="map"></div>
+    <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIwzALxUPNbatRBj3Xi1Uhp0fFzwWNBkE&callback=initMap&libraries=geometry&v=weekly"></script>
+        </script>
+</body>
+
+</html>
